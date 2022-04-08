@@ -3,7 +3,13 @@ const CATEGORY_SELECTOR = "categories-list";
 const CATEGORY_FILTER = "categories-list-filter";
 
 let tasks = [];
-let categories = [];
+let categories = ["Uncategorized"];
+const renderCat = (categories) => {
+  renderCategories(categories, CATEGORY_SELECTOR);
+  renderCategories(["all", ...categories], CATEGORY_FILTER);
+};
+
+renderCat(categories);
 
 function taskChecked(taskId, checked) {
   // implement the delete task.
@@ -30,18 +36,21 @@ function addCategory() {
   const newCategory = getNewCategoryText();
   // continue the code here
   categories.push(newCategory);
-  renderCategories(categories, CATEGORY_SELECTOR);
-  renderCategories(categories, CATEGORY_FILTER);
+  renderCat(categories);
 }
 
 function filterTasks() {
   const selectedCategory = getSelectedCategoryById(CATEGORY_FILTER);
   const done = getFilteredDone();
   // continue the code here
-  const filteredTasks = tasks.filter((task) =>
-    done
-      ? task.done === true && task.category === selectedCategory
-      : task.category === selectedCategory
-  );
+  let filteredTasks;
+  if (selectedCategory === "all")
+    filteredTasks = done ? tasks.filter((task) => task.done) : tasks;
+  else
+    filteredTasks = tasks.filter((task) =>
+      done
+        ? task.done && task.category === selectedCategory
+        : task.category === selectedCategory
+    );
   renderTasks(filteredTasks, "tasks-list");
 }
